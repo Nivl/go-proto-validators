@@ -64,4 +64,6 @@ message FieldValidator {
   optional int64 length_eq = 16;
   // Used for string fields, requires the string to be a UUID v4.
   optional bool uuid = 17;
+  // Used for string fields, requires the string to be a valid email.
+  optional bool email = 18;
 }

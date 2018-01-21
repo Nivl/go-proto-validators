@@ -15,7 +15,7 @@ var (
 )
 
 func buildProto3(someString string, someInt uint32, identifier string, someValue int64, someDoubleStrict float64,
-	someFloatStrict float32, someDouble float64, someFloat float32, nonEmptyString string, repeatedCount uint32, someStringLength string, someBytes []byte, someUUID string) *ValidatorMessage3 {
+	someFloatStrict float32, someDouble float64, someFloat float32, nonEmptyString string, repeatedCount uint32, someStringLength string, someBytes []byte, someUUID string, someEmail string) *ValidatorMessage3 {
 	goodEmbeddedProto3 := &ValidatorMessage3_Embedded{
 		Identifier: identifier,
 		SomeValue:  someValue,
@@ -55,6 +55,7 @@ func buildProto3(someString string, someInt uint32, identifier string, someValue
 		SomeStringLtReq:    someStringLength,
 		SomeStringGtReq:    someStringLength,
 		SomeUUID:           someUUID,
+		SomeEmail:          someEmail,
 
 		SomeBytesLtReq:   someBytes,
 		SomeBytesGtReq:   someBytes,
@@ -68,7 +69,7 @@ func buildProto3(someString string, someInt uint32, identifier string, someValue
 }
 
 func buildProto2(someString string, someInt uint32, identifier string, someValue int64, someDoubleStrict float64,
-	someFloatStrict float32, someDouble float64, someFloat float32, nonEmptyString string, repeatedCount uint32, someStringLength string, someBytes []byte, someUUID string) *ValidatorMessage {
+	someFloatStrict float32, someDouble float64, someFloat float32, nonEmptyString string, repeatedCount uint32, someStringLength string, someBytes []byte, someUUID string, someEmail string) *ValidatorMessage {
 	goodEmbeddedProto2 := &ValidatorMessage_Embedded{
 		Identifier: &identifier,
 		SomeValue:  &someValue,
@@ -114,6 +115,7 @@ func buildProto2(someString string, someInt uint32, identifier string, someValue
 		SomeStringLtReq:    &someStringLength,
 		SomeStringGtReq:    &someStringLength,
 		SomeUUID:           &someUUID,
+		SomeEmail:          &someEmail,
 
 		SomeBytesLtReq:   someBytes,
 		SomeBytesGtReq:   someBytes,
@@ -128,7 +130,7 @@ func buildProto2(someString string, someInt uint32, identifier string, someValue
 
 func TestGoodProto3(t *testing.T) {
 	var err error
-	goodProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	goodProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	err = goodProto3.Validate()
 	if err != nil {
 		t.Fatalf("unexpected fail in validator: %v", err)
@@ -137,7 +139,7 @@ func TestGoodProto3(t *testing.T) {
 
 func TestGoodProto2(t *testing.T) {
 	var err error
-	goodProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	goodProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	err = goodProto2.Validate()
 	if err != nil {
 		t.Fatalf("unexpected fail in validator: %v", err)
@@ -145,254 +147,254 @@ func TestGoodProto2(t *testing.T) {
 }
 
 func TestStringRegex(t *testing.T) {
-	tooLong1Proto3 := buildProto3("toolong", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	tooLong1Proto3 := buildProto3("toolong", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if tooLong1Proto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	tooLong2Proto3 := buildProto3("-%ab", 11, "bad#", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	tooLong2Proto3 := buildProto3("-%ab", 11, "bad#", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if tooLong2Proto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	tooLong1Proto2 := buildProto2("toolong", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	tooLong1Proto2 := buildProto2("toolong", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if tooLong1Proto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	tooLong2Proto2 := buildProto2("-%ab", 11, "bad#", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	tooLong2Proto2 := buildProto2("-%ab", 11, "bad#", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if tooLong2Proto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
 }
 
 func TestIntLowerBounds(t *testing.T) {
-	lowerThan10Proto3 := buildProto3("-%ab", 9, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan10Proto3 := buildProto3("-%ab", 9, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan10Proto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	lowerThan10Proto2 := buildProto2("-%ab", 9, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan10Proto2 := buildProto2("-%ab", 9, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan10Proto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	lowerThan0Proto3 := buildProto3("-%ab", 11, "abba", -1, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan0Proto3 := buildProto3("-%ab", 11, "abba", -1, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan0Proto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	lowerThan0Proto2 := buildProto2("-%ab", 11, "abba", -1, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan0Proto2 := buildProto2("-%ab", 11, "abba", -1, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan0Proto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
 }
 
 func TestIntUpperBounds(t *testing.T) {
-	greaterThan100Proto3 := buildProto3("-%ab", 11, "abba", 101, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	greaterThan100Proto3 := buildProto3("-%ab", 11, "abba", 101, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if greaterThan100Proto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	greaterThan100Proto2 := buildProto2("-%ab", 11, "abba", 101, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	greaterThan100Proto2 := buildProto2("-%ab", 11, "abba", 101, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if greaterThan100Proto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
 }
 
 func TestDoubleStrictLowerBounds(t *testing.T) {
-	lowerThan035EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.3, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan035EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.3, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan035EpsilonProto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	lowerThan035EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.3, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan035EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.3, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan035EpsilonProto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	greaterThan035EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.300000001, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	greaterThan035EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.300000001, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if greaterThan035EpsilonProto3.Validate() != nil {
 		t.Fatalf("unexpected fail in validator")
 	}
-	greaterThan035EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.300000001, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	greaterThan035EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.300000001, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if greaterThan035EpsilonProto2.Validate() != nil {
 		t.Fatalf("unexpected fail in validator")
 	}
 }
 
 func TestDoubleStrictUpperBounds(t *testing.T) {
-	greaterThan065EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.70000000001, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	greaterThan065EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.70000000001, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if greaterThan065EpsilonProto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	greaterThan065EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.70000000001, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	greaterThan065EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.70000000001, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if greaterThan065EpsilonProto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	lowerThan065EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.6999999999, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan065EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.6999999999, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan065EpsilonProto3.Validate() != nil {
 		t.Fatalf("unexpected fail in validator")
 	}
-	lowerThan065EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.6999999999, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan065EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.6999999999, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan065EpsilonProto2.Validate() != nil {
 		t.Fatalf("unexpected fail in validator")
 	}
 }
 
 func TestFloatStrictLowerBounds(t *testing.T) {
-	lowerThan035EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.2999999, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan035EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.2999999, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan035EpsilonProto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	lowerThan035EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.2999999, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan035EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.2999999, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan035EpsilonProto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	greaterThan035EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.3000001, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	greaterThan035EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.3000001, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := greaterThan035EpsilonProto3.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
-	greaterThan035EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.3000001, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	greaterThan035EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.3000001, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := greaterThan035EpsilonProto2.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
 }
 
 func TestFloatStrictUpperBounds(t *testing.T) {
-	greaterThan065EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.7000001, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	greaterThan065EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.7000001, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if greaterThan065EpsilonProto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	greaterThan065EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.7000001, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	greaterThan065EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.7000001, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if greaterThan065EpsilonProto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	lowerThan065EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.6999999, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan065EpsilonProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.6999999, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := lowerThan065EpsilonProto3.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
-	lowerThan065EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.6999999, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan065EpsilonProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.6999999, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := lowerThan065EpsilonProto2.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
 }
 
 func TestDoubleNonStrictLowerBounds(t *testing.T) {
-	lowerThan0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.2499999, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.2499999, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan0Proto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	lowerThan0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.2499999, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.2499999, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan0Proto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	equalTo0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.25, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	equalTo0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.25, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := equalTo0Proto3.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
-	equalTo0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.25, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	equalTo0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.25, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := equalTo0Proto2.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
 }
 
 func TestDoubleNonStrictUpperBounds(t *testing.T) {
-	higherThan1Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.75111111, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	higherThan1Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.75111111, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if higherThan1Proto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	higherThan1Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.75111111, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	higherThan1Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.75111111, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if higherThan1Proto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	equalTo0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.75, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	equalTo0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.75, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := equalTo0Proto3.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
-	equalTo0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.75, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	equalTo0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.75, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := equalTo0Proto2.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
 }
 
 func TestFloatNonStrictLowerBounds(t *testing.T) {
-	lowerThan0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.2499999, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.2499999, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan0Proto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	lowerThan0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.2499999, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	lowerThan0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.2499999, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if lowerThan0Proto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	equalTo0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.25, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	equalTo0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.25, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := equalTo0Proto3.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
-	equalTo0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.25, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	equalTo0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.25, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := equalTo0Proto2.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
 }
 
 func TestFloatNonStrictUpperBounds(t *testing.T) {
-	higherThan1Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.75111111, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	higherThan1Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.75111111, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if higherThan1Proto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	higherThan1Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.75111111, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	higherThan1Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.75111111, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if higherThan1Proto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	equalTo0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.75, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	equalTo0Proto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.75, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := equalTo0Proto3.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
-	equalTo0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.75, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	equalTo0Proto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.75, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := equalTo0Proto2.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
 }
 
 func TestStringNonEmpty(t *testing.T) {
-	emptyStringProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	emptyStringProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if emptyStringProto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	emptyStringProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	emptyStringProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if emptyStringProto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	nonEmptyStringProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	nonEmptyStringProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := nonEmptyStringProto3.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
-	nonEmptyStringProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	nonEmptyStringProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := nonEmptyStringProto2.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
 }
 
 func TestRepeatedEltsCount(t *testing.T) {
-	notEnoughEltsProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 1, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	notEnoughEltsProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 1, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if notEnoughEltsProto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	notEnoughEltsProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 1, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	notEnoughEltsProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 1, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if notEnoughEltsProto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	tooManyEltsProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 14, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	tooManyEltsProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 14, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if tooManyEltsProto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	tooManyEltsProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 14, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	tooManyEltsProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 14, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if tooManyEltsProto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	validEltsCountProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	validEltsCountProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := validEltsCountProto3.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
-	validEltsCountProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	validEltsCountProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := validEltsCountProto2.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
 }
 
 func TestMsgExist(t *testing.T) {
-	someProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	someProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	someProto3.SomeEmbedded = nil
 	if err := someProto3.Validate(); err != nil {
 		t.Fatalf("validate shouldn't fail on missing SomeEmbedded, not annotated")
@@ -406,7 +408,7 @@ func TestMsgExist(t *testing.T) {
 }
 
 func TestNestedError3(t *testing.T) {
-	someProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	someProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	someProto3.SomeEmbeddedExists.SomeValue = 101 // should be less than 101
 	if err := someProto3.Validate(); err == nil {
 		t.Fatalf("expected fail due to nested SomeEmbeddedExists.SomeValue being wrong")
@@ -416,7 +418,7 @@ func TestNestedError3(t *testing.T) {
 }
 
 func TestCustomError_Proto3(t *testing.T) {
-	someProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	someProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	someProto3.CustomErrorInt = 30
 	expectedErr := "invalid field CustomErrorInt: My Custom Error"
 	if err := someProto3.Validate(); err == nil {
@@ -487,20 +489,39 @@ func TestOneOf_Passes(t *testing.T) {
 }
 
 func TestUUID(t *testing.T) {
-	invalidUUIDProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "not-a-uuid")
+	invalidUUIDProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "not-a-uuid", "email@domain.tld")
 	if invalidUUIDProto3.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	invalidUUIDProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "not-a-uuid")
+	invalidUUIDProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "not-a-uuid", "email@domain.tld")
 	if invalidUUIDProto2.Validate() == nil {
 		t.Fatalf("expected fail in validator, but it didn't happen")
 	}
-	validUUIDProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	validUUIDProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := validUUIDProto3.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
-	validUUIDProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261")
+	validUUIDProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
 	if err := validUUIDProto2.Validate(); err != nil {
+		t.Fatalf("unexpected fail in validator %v", err)
+	}
+}
+
+func TestEmail(t *testing.T) {
+	invalidEmailProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "not-a-uuid", "not-an-email")
+	if invalidEmailProto3.Validate() == nil {
+		t.Fatalf("expected fail in validator, but it didn't happen")
+	}
+	invalidEmailProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "not-a-uuid", "not-an-email")
+	if invalidEmailProto2.Validate() == nil {
+		t.Fatalf("expected fail in validator, but it didn't happen")
+	}
+	validEmailProto3 := buildProto3("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
+	if err := validEmailProto3.Validate(); err != nil {
+		t.Fatalf("unexpected fail in validator %v", err)
+	}
+	validEmailProto2 := buildProto2("-%ab", 11, "abba", 99, 0.5, 0.5, 0.5, 0.5, "x", 4, "1234567890", stableBytes, "af8f005b-d36f-449b-930c-05b7f0c59261", "email@domain.tld")
+	if err := validEmailProto2.Validate(); err != nil {
 		t.Fatalf("unexpected fail in validator %v", err)
 	}
 }

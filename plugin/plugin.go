@@ -485,6 +485,14 @@ func (p *plugin) generateStringValidator(variableName string, ccTypeName string,
 		p.Out()
 		p.P(`}`)
 	}
+	if fv.Email != nil {
+		p.P("if !regexp.MustCompile(`.+@.+\\..+`).MatchString(", variableName, ") {")
+		p.In()
+		errorStr := "be a valid email address"
+		p.generateErrorString(variableName, fieldName, errorStr, fv)
+		p.Out()
+		p.P(`}`)
+	}
 	p.generateLengthValidator(variableName, ccTypeName, fieldName, fv)
 
 }

@@ -69,4 +69,5 @@ message ValidatorMessage3 {
 	bytes SomeBytesGtReq = 40 [(validator.field) = {length_lt: 20}];
 	bytes SomeBytesEqReq = 41 [(validator.field) = {length_eq: 12}];
 	string SomeUUID = 42 [(validator.field) = {uuid: true}];
+	string SomeEmail = 43 [(validator.field) = {email: true}];
 }
