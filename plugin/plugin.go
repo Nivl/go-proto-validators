@@ -55,12 +55,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Nivl/go-proto-validators"
 	"github.com/gogo/protobuf/gogoproto"
 	"github.com/gogo/protobuf/proto"
 	descriptor "github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
 	"github.com/gogo/protobuf/vanity"
-	"github.com/mwitkow/go-proto-validators"
 )
 
 type plugin struct {
@@ -92,7 +92,7 @@ func (p *plugin) Generate(file *generator.FileDescriptor) {
 	p.PluginImports = generator.NewPluginImports(p.Generator)
 	p.regexPkg = p.NewImport("regexp")
 	p.fmtPkg = p.NewImport("fmt")
-	p.validatorPkg = p.NewImport("github.com/mwitkow/go-proto-validators")
+	p.validatorPkg = p.NewImport("github.com/Nivl/go-proto-validators")
 
 	for _, msg := range file.Messages() {
 		if msg.DescriptorProto.GetOptions().GetMapEntry() {
@@ -204,7 +204,7 @@ func (p *plugin) generateProto2Message(file *generator.FileDescriptor, message *
 			p.generateIntValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if p.isSupportedFloat(field) {
 			p.generateFloatValidator(variableName, ccTypeName, fieldName, fieldValidator)
-		} else if (field.IsBytes()) {
+		} else if field.IsBytes() {
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if field.IsMessage() {
 			if repeated && nullable {
@@ -282,7 +282,7 @@ func (p *plugin) generateProto3Message(file *generator.FileDescriptor, message *
 			p.generateIntValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if p.isSupportedFloat(field) {
 			p.generateFloatValidator(variableName, ccTypeName, fieldName, fieldValidator)
-		} else if (field.IsBytes()) {
+		} else if field.IsBytes() {
 			p.generateLengthValidator(variableName, ccTypeName, fieldName, fieldValidator)
 		} else if field.IsMessage() {
 			if p.validatorWithMessageExists(fieldValidator) {
@@ -473,6 +473,14 @@ func (p *plugin) generateStringValidator(variableName string, ccTypeName string,
 		p.P(`if `, variableName, ` == "" {`)
 		p.In()
 		errorStr := "not be an empty string"
+		p.generateErrorString(variableName, fieldName, errorStr, fv)
+		p.Out()
+		p.P(`}`)
+	}
+	if fv.Uuid != nil {
+		p.P(`if !regexp.MustCompile("[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[8|9|aA|bB][a-f0-9]{3}-[a-f0-9]{12}").MatchString(`, variableName, `) {`)
+		p.In()
+		errorStr := "be a valid UUID"
 		p.generateErrorString(variableName, fieldName, errorStr, fv)
 		p.Out()
 		p.P(`}`)

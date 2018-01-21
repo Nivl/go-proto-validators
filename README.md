@@ -1,9 +1,14 @@
 # Golang ProtoBuf Validator Compiler
 
-[![Travis Build](https://travis-ci.org/mwitkow/go-proto-validators.svg)](https://travis-ci.org/mwitkow/go-proto-validators)
+[![Travis Build](https://travis-ci.org/Nivl/go-proto-validators.svg)](https://travis-ci.org/Nivl/go-proto-validators)
 [![Apache 2.0 License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
-A `protoc` plugin that generates `Validate() error` functions on Go proto `struct`s based on annotations inside `.proto` 
+**Fork of [mwitkow/go-proto-validators](https://github.com/mwitkow/go-proto-validators) with a few changes:**
+
+* Add the `uuid` option to force a field to be valid UUID v4
+* Add the `email` option to force a field to be a "valid" email
+
+A `protoc` plugin that generates `Validate() error` functions on Go proto `struct`s based on annotations inside `.proto`
 files. The validation functions are code-generated and thus don't suffer on performance from tag-based reflection on
 deeply-nested messages.
 
@@ -14,7 +19,7 @@ Let's take the following `proto3` snippet:
 ```proto
 syntax = "proto3";
 package validator.examples;
-import "github.com/mwitkow/go-proto-validators/validator.proto";
+import "github.com/Nivl/go-proto-validators/validator.proto";
 
 message InnerMessage {
   // some_integer can only be in range (1, 100).
@@ -83,7 +88,7 @@ export PATH=${PATH}:${GOPATH}/bin
 Then, do the usual
 
 ```sh
-go get github.com/mwitkow/go-proto-validators/protoc-gen-govalidators
+go get github.com/Nivl/go-proto-validators/protoc-gen-govalidators
 ```
 
 Your `protoc` builds probably look very simple like:
@@ -95,7 +100,7 @@ protoc  \
 	*.proto
 ```
 
-That's fine, until you encounter `.proto` includes. Because `go-proto-validators` uses annotations inside the `.proto` 
+That's fine, until you encounter `.proto` includes. Because `go-proto-validators` uses annotations inside the `.proto`
 files themselves, it's `.proto` definition (and the Google `descriptor.proto` itself) need to on the `protoc` include
 path. Hence the above becomes:
 
@@ -121,12 +126,9 @@ protoc  \
 	*.proto
 ```
 
-Basically the magical incantation (apart from includes) is the `--govalidators_out`. That triggers the 
+Basically the magical incantation (apart from includes) is the `--govalidators_out`. That triggers the
 `protoc-gen-govalidators` plugin to generate `mymessage.validator.pb.go`. That's it :)
 
 ###License
 
 `go-proto-validators` is released under the Apache 2.0 license. See the [LICENSE](LICENSE) file for details.
-
-
-
