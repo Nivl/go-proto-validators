@@ -478,7 +478,7 @@ func (p *plugin) generateStringValidator(variableName string, ccTypeName string,
 		p.P(`}`)
 	}
 	if fv.Uuid != nil {
-		p.P(`if !regexp.MustCompile("[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[8|9|aA|bB][a-f0-9]{3}-[a-f0-9]{12}").MatchString(`, variableName, `) {`)
+		p.P(`if `, variableName, ` != "" && !regexp.MustCompile("[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[8|9|aA|bB][a-f0-9]{3}-[a-f0-9]{12}").MatchString(`, variableName, `) {`)
 		p.In()
 		errorStr := "be a valid UUID"
 		p.generateErrorString(variableName, fieldName, errorStr, fv)
@@ -486,7 +486,7 @@ func (p *plugin) generateStringValidator(variableName string, ccTypeName string,
 		p.P(`}`)
 	}
 	if fv.Email != nil {
-		p.P("if !regexp.MustCompile(`.+@.+\\..+`).MatchString(", variableName, ") {")
+		p.P("if ", variableName, " != \"\" && !regexp.MustCompile(`.+@.+\\..+`).MatchString(", variableName, ") {")
 		p.In()
 		errorStr := "be a valid email address"
 		p.generateErrorString(variableName, fieldName, errorStr, fv)
